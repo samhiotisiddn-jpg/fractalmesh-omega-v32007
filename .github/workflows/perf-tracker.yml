@@ -1,0 +1,36 @@
+name: perf-tracker
+
+on:
+  schedule:
+    - cron: '0 8 * * *'
+  workflow_dispatch:
+    inputs:
+      stale_warning_only:
+        description: 'Treat stale-item findings as warnings instead of failures'
+        required: false
+        default: 'true'
+
+jobs:
+  validate-and-report:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Validate tracker schema
+        run: python scripts/validate_tracker.py --data tracker/deepseek_v4_perf_tracker.json validate
+
+      - name: Generate tracker outputs
+        run: python scripts/generate_tracker_report.py --data tracker/deepseek_v4_perf_tracker.json
+
+      - name: Ensure generated outputs are committed
+        run: git diff --exit-code -- docs/status/latest.md docs/status/latest.json docs/status/priorities.md docs/status/priorities.json
+
+      - name: Check stale items
+        continue-on-error: ${{ github.event_name == 'schedule' || github.event.inputs.stale_warning_only == 'true' }}
+        run: python scripts/generate_tracker_report.py --data tracker/deepseek_v4_perf_tracker.json --fail-on-stale

@@ -1,0 +1,434 @@
+{
+  "critical_path_candidates": [
+    {
+      "id": "dspark-c128-online-compressor",
+      "title": "DSpark C128 online compressor",
+      "section": "Speculative decoding (MTP / DSpark / EAGLE3)",
+      "status": "todo",
+      "score": 55,
+      "dependency_depth": 8,
+      "blocked_chain": [
+        "dspark-c128-online-compressor",
+        "compile-hc-head-during-cuda-graph-capture",
+        "fuse-draft-extend-swa-translation",
+        "fuse-compressed-metadata-init",
+        "fuse-target-verify-metadata-prologue",
+        "skip-inactive-target-verify-metadata-tails",
+        "remove-redundant-draft-metadata-copies",
+        "skip-unused-draft-metadata",
+        "fuse-offline-c128-draft-cleanup"
+      ]
+    },
+    {
+      "id": "overlap-scheduling-online-c128-mtp",
+      "title": "Overlap scheduling for online C128 MTP",
+      "section": "CUDA graph & scheduling",
+      "status": "todo",
+      "score": 55,
+      "dependency_depth": 8,
+      "blocked_chain": [
+        "overlap-scheduling-online-c128-mtp",
+        "compile-hc-head-during-cuda-graph-capture",
+        "fuse-draft-extend-swa-translation",
+        "fuse-compressed-metadata-init",
+        "fuse-target-verify-metadata-prologue",
+        "skip-inactive-target-verify-metadata-tails",
+        "remove-redundant-draft-metadata-copies",
+        "skip-unused-draft-metadata",
+        "fuse-offline-c128-draft-cleanup"
+      ]
+    },
+    {
+      "id": "compile-hc-head-during-cuda-graph-capture",
+      "title": "Compile draft / draft-extend `hc_head` during CUDA graph capture",
+      "section": "Speculative decoding (MTP / DSpark / EAGLE3)",
+      "status": "todo",
+      "score": 52,
+      "dependency_depth": 7,
+      "blocked_chain": [
+        "compile-hc-head-during-cuda-graph-capture",
+        "fuse-draft-extend-swa-translation",
+        "fuse-compressed-metadata-init",
+        "fuse-target-verify-metadata-prologue",
+        "skip-inactive-target-verify-metadata-tails",
+        "remove-redundant-draft-metadata-copies",
+        "skip-unused-draft-metadata",
+        "fuse-offline-c128-draft-cleanup"
+      ]
+    },
+    {
+      "id": "fuse-draft-extend-swa-translation",
+      "title": "Fuse draft-extend SWA location translation",
+      "section": "Speculative decoding (MTP / DSpark / EAGLE3)",
+      "status": "todo",
+      "score": 49,
+      "dependency_depth": 6,
+      "blocked_chain": [
+        "fuse-draft-extend-swa-translation",
+        "fuse-compressed-metadata-init",
+        "fuse-target-verify-metadata-prologue",
+        "skip-inactive-target-verify-metadata-tails",
+        "remove-redundant-draft-metadata-copies",
+        "skip-unused-draft-metadata",
+        "fuse-offline-c128-draft-cleanup"
+      ]
+    },
+    {
+      "id": "decode-context-parallelism-dsv4",
+      "title": "Decode context parallelism for DeepSeek V4",
+      "section": "Communication & context parallelism",
+      "status": "todo",
+      "score": 47,
+      "dependency_depth": 3,
+      "blocked_chain": [
+        "decode-context-parallelism-dsv4",
+        "cp-v2-strategy",
+        "cp-layersplit-full-implementation",
+        "cp-layersplit-common-infra"
+      ]
+    },
+    {
+      "id": "fuse-compressed-metadata-init",
+      "title": "Fuse compressed metadata initialization",
+      "section": "Speculative decoding (MTP / DSpark / EAGLE3)",
+      "status": "todo",
+      "score": 46,
+      "dependency_depth": 5,
+      "blocked_chain": [
+        "fuse-compressed-metadata-init",
+        "fuse-target-verify-metadata-prologue",
+        "skip-inactive-target-verify-metadata-tails",
+        "remove-redundant-draft-metadata-copies",
+        "skip-unused-draft-metadata",
+        "fuse-offline-c128-draft-cleanup"
+      ]
+    },
+    {
+      "id": "fuse-target-verify-metadata-prologue",
+      "title": "Fuse the target-verify metadata prologue",
+      "section": "Speculative decoding (MTP / DSpark / EAGLE3)",
+      "status": "todo",
+      "score": 43,
+      "dependency_depth": 4,
+      "blocked_chain": [
+        "fuse-target-verify-metadata-prologue",
+        "skip-inactive-target-verify-metadata-tails",
+        "remove-redundant-draft-metadata-copies",
+        "skip-unused-draft-metadata",
+        "fuse-offline-c128-draft-cleanup"
+      ]
+    },
+    {
+      "id": "flashinfer-megamoe-zero-copy-adapter",
+      "title": "FlashInfer MegaMoE, plus the zero-copy adapter path",
+      "section": "MoE & quantization",
+      "status": "todo",
+      "score": 41,
+      "dependency_depth": 1,
+      "blocked_chain": [
+        "flashinfer-megamoe-zero-copy-adapter",
+        "auto-select-fp4-moe-backends"
+      ]
+    },
+    {
+      "id": "skip-inactive-target-verify-metadata-tails",
+      "title": "Skip inactive target-verify metadata tails",
+      "section": "Speculative decoding (MTP / DSpark / EAGLE3)",
+      "status": "todo",
+      "score": 40,
+      "dependency_depth": 3,
+      "blocked_chain": [
+        "skip-inactive-target-verify-metadata-tails",
+        "remove-redundant-draft-metadata-copies",
+        "skip-unused-draft-metadata",
+        "fuse-offline-c128-draft-cleanup"
+      ]
+    },
+    {
+      "id": "mtp-trtllm-sparse-attention",
+      "title": "Enable MTP on the TRT-LLM sparse attention path",
+      "section": "Attention & compression kernels",
+      "status": "todo",
+      "score": 40,
+      "dependency_depth": 1,
+      "blocked_chain": [
+        "mtp-trtllm-sparse-attention",
+        "trtllm-dsv4-attention-sm100-103"
+      ]
+    }
+  ],
+  "quick_wins": [
+    {
+      "id": "add-dsv4-nvfp4-tests",
+      "title": "Add DSV4 NVFP4 tests",
+      "section": "CI & bug tracking",
+      "status": "todo",
+      "dependency_depth": 0,
+      "score": 21
+    },
+    {
+      "id": "flashmla-norm-rope-ilp",
+      "title": "FlashMLA norm-rope: K-tokens-per-block ILP to hide load latency",
+      "section": "Attention & compression kernels",
+      "status": "todo",
+      "dependency_depth": 0,
+      "score": 18
+    },
+    {
+      "id": "occupancy-tuning-dsa-indexer-fp8-q",
+      "title": "Occupancy tuning for the DSA indexer fp8-quant Q kernel",
+      "section": "Indexer & top-k",
+      "status": "todo",
+      "dependency_depth": 0,
+      "score": 18
+    },
+    {
+      "id": "optimize-c128-epilogue",
+      "title": "Optimize the c128 epilogue",
+      "section": "Attention & compression kernels",
+      "status": "todo",
+      "dependency_depth": 0,
+      "score": 18
+    },
+    {
+      "id": "remove-prefill-cp-kv-compressor-materialization",
+      "title": "Remove prefill CP KV and compressor materialization",
+      "section": "Communication & context parallelism",
+      "status": "todo",
+      "dependency_depth": 0,
+      "score": 18
+    }
+  ],
+  "blocked_items": [
+    {
+      "id": "dspark-c128-online-compressor",
+      "title": "DSpark C128 online compressor",
+      "section": "Speculative decoding (MTP / DSpark / EAGLE3)",
+      "status": "todo",
+      "active_blockers": [
+        "compile-hc-head-during-cuda-graph-capture"
+      ],
+      "dependency_depth": 8
+    },
+    {
+      "id": "overlap-scheduling-online-c128-mtp",
+      "title": "Overlap scheduling for online C128 MTP",
+      "section": "CUDA graph & scheduling",
+      "status": "todo",
+      "active_blockers": [
+        "compile-hc-head-during-cuda-graph-capture"
+      ],
+      "dependency_depth": 8
+    },
+    {
+      "id": "compile-hc-head-during-cuda-graph-capture",
+      "title": "Compile draft / draft-extend `hc_head` during CUDA graph capture",
+      "section": "Speculative decoding (MTP / DSpark / EAGLE3)",
+      "status": "todo",
+      "active_blockers": [
+        "fuse-draft-extend-swa-translation"
+      ],
+      "dependency_depth": 7
+    },
+    {
+      "id": "fuse-draft-extend-swa-translation",
+      "title": "Fuse draft-extend SWA location translation",
+      "section": "Speculative decoding (MTP / DSpark / EAGLE3)",
+      "status": "todo",
+      "active_blockers": [
+        "fuse-compressed-metadata-init"
+      ],
+      "dependency_depth": 6
+    },
+    {
+      "id": "fuse-compressed-metadata-init",
+      "title": "Fuse compressed metadata initialization",
+      "section": "Speculative decoding (MTP / DSpark / EAGLE3)",
+      "status": "todo",
+      "active_blockers": [
+        "fuse-target-verify-metadata-prologue"
+      ],
+      "dependency_depth": 5
+    },
+    {
+      "id": "fuse-target-verify-metadata-prologue",
+      "title": "Fuse the target-verify metadata prologue",
+      "section": "Speculative decoding (MTP / DSpark / EAGLE3)",
+      "status": "todo",
+      "active_blockers": [
+        "skip-inactive-target-verify-metadata-tails"
+      ],
+      "dependency_depth": 4
+    },
+    {
+      "id": "decode-context-parallelism-dsv4",
+      "title": "Decode context parallelism for DeepSeek V4",
+      "section": "Communication & context parallelism",
+      "status": "todo",
+      "active_blockers": [
+        "cp-v2-strategy"
+      ],
+      "dependency_depth": 3
+    },
+    {
+      "id": "skip-inactive-target-verify-metadata-tails",
+      "title": "Skip inactive target-verify metadata tails",
+      "section": "Speculative decoding (MTP / DSpark / EAGLE3)",
+      "status": "todo",
+      "active_blockers": [
+        "remove-redundant-draft-metadata-copies"
+      ],
+      "dependency_depth": 3
+    },
+    {
+      "id": "cp-v2-strategy",
+      "title": "CP V2 strategy",
+      "section": "Communication & context parallelism",
+      "status": "todo",
+      "active_blockers": [
+        "cp-layersplit-full-implementation"
+      ],
+      "dependency_depth": 2
+    },
+    {
+      "id": "remove-redundant-draft-metadata-copies",
+      "title": "Remove redundant draft metadata copies",
+      "section": "Speculative decoding (MTP / DSpark / EAGLE3)",
+      "status": "todo",
+      "active_blockers": [
+        "skip-unused-draft-metadata"
+      ],
+      "dependency_depth": 2
+    },
+    {
+      "id": "alt-stream-during-bcg-prefill",
+      "title": "Alt stream during BCG prefill",
+      "section": "CUDA graph & scheduling",
+      "status": "todo",
+      "active_blockers": [
+        "enable-prefill-bcg-v4-memory-reserve"
+      ],
+      "dependency_depth": 1
+    },
+    {
+      "id": "batched-round-robin-cp-prefill-indexer",
+      "title": "Batched and round-robin CP prefill in the non-paged indexer",
+      "section": "Indexer & top-k",
+      "status": "todo",
+      "active_blockers": [
+        "indexcache-pd-cp-hicache"
+      ],
+      "dependency_depth": 1
+    },
+    {
+      "id": "bound-c4-indexer-logits-memory",
+      "title": "Bound C4 indexer logits peak memory via varlen routing + query-axis chunking",
+      "section": "Indexer & top-k",
+      "status": "todo",
+      "active_blockers": [
+        "rewrite-paged-mqa-metadata"
+      ],
+      "dependency_depth": 1
+    },
+    {
+      "id": "breakable-cuda-graph-mixed-chunk-prefill",
+      "title": "Breakable CUDA graph for mixed-chunk prefill",
+      "section": "CUDA graph & scheduling",
+      "status": "todo",
+      "active_blockers": [
+        "enable-prefill-bcg-v4-memory-reserve"
+      ],
+      "dependency_depth": 1
+    },
+    {
+      "id": "cp-layersplit-full-implementation",
+      "title": "CP cache LayerSplit: full implementation",
+      "section": "Communication & context parallelism",
+      "status": "todo",
+      "active_blockers": [
+        "cp-layersplit-common-infra"
+      ],
+      "dependency_depth": 1
+    },
+    {
+      "id": "decode-radix-cache-mtp-pd-disagg",
+      "title": "Decode radix cache with MTP under P/D disagg",
+      "section": "Memory & KV capacity",
+      "status": "todo",
+      "active_blockers": [
+        "swa-recompute-trailing-window"
+      ],
+      "dependency_depth": 1
+    },
+    {
+      "id": "flashinfer-megamoe-zero-copy-adapter",
+      "title": "FlashInfer MegaMoE, plus the zero-copy adapter path",
+      "section": "MoE & quantization",
+      "status": "todo",
+      "active_blockers": [
+        "auto-select-fp4-moe-backends"
+      ],
+      "dependency_depth": 1
+    },
+    {
+      "id": "fused-norm-rope-fp8-store",
+      "title": "Fused norm + RoPE + uniform fp8 store for TRT-LLM DSv4 sparse attention",
+      "section": "Attention & compression kernels",
+      "status": "todo",
+      "active_blockers": [
+        "trtllm-dsv4-attention-sm100-103"
+      ],
+      "dependency_depth": 1
+    },
+    {
+      "id": "keep-fp32-routing-weights-mxfp4-trtllm-moe",
+      "title": "Keep fp32 routing weights in the MXFP4 trtllm MoE",
+      "section": "MoE & quantization",
+      "status": "todo",
+      "active_blockers": [
+        "auto-select-fp4-moe-backends"
+      ],
+      "dependency_depth": 1
+    },
+    {
+      "id": "mtp-trtllm-sparse-attention",
+      "title": "Enable MTP on the TRT-LLM sparse attention path",
+      "section": "Attention & compression kernels",
+      "status": "todo",
+      "active_blockers": [
+        "trtllm-dsv4-attention-sm100-103"
+      ],
+      "dependency_depth": 1
+    },
+    {
+      "id": "nightly-aime25-dsv4-pro-b200",
+      "title": "Nightly AIME25 for DeepSeek-V4-Pro on B200",
+      "section": "CI & bug tracking",
+      "status": "todo",
+      "active_blockers": [
+        "add-dsv4-nvfp4-tests"
+      ],
+      "dependency_depth": 1
+    },
+    {
+      "id": "skip-unused-draft-metadata",
+      "title": "Skip unused draft metadata",
+      "section": "Speculative decoding (MTP / DSpark / EAGLE3)",
+      "status": "todo",
+      "active_blockers": [
+        "fuse-offline-c128-draft-cleanup"
+      ],
+      "dependency_depth": 1
+    },
+    {
+      "id": "split-mixed-chunk-fp8-paged-mla",
+      "title": "Split mixed-chunk attention: route decode tokens to the fp8 paged MLA kernel",
+      "section": "Attention & compression kernels",
+      "status": "todo",
+      "active_blockers": [
+        "q8kv8-sparse-mla-prefill-sm90"
+      ],
+      "dependency_depth": 1
+    }
+  ]
+}
