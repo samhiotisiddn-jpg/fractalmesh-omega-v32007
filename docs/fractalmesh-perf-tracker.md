@@ -4,7 +4,7 @@ This repository mirrors and operationalizes the upstream DeepSeek V4 NVIDIA perf
 
 ## Updating checklist items
 
-1. Edit `/home/runner/work/fractalmesh-omega-v32007/fractalmesh-omega-v32007/tracker/deepseek_v4_perf_tracker.json`.
+1. Edit `tracker/deepseek_v4_perf_tracker.json`.
 2. Keep each item's `id` stable.
 3. Update `status`, `blocked_by`, `owner`, `notes`, and `updated_at` as work changes.
 4. Run validation and report generation locally before committing.
@@ -12,7 +12,7 @@ This repository mirrors and operationalizes the upstream DeepSeek V4 NVIDIA perf
 ## Local commands
 
 ```bash
-cd /home/runner/work/fractalmesh-omega-v32007/fractalmesh-omega-v32007
+cd <repo-root>
 python scripts/validate_tracker.py --data tracker/deepseek_v4_perf_tracker.json validate
 python scripts/generate_tracker_report.py --data tracker/deepseek_v4_perf_tracker.json
 python -m unittest discover -s tests -v

@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Any
 
-from perf_tracker.io import iter_items
+from perf_tracker.io import list_items
 from perf_tracker.types import TrackerDocument
 
 ALLOWED_STATUSES = {"todo", "blocked", "in_progress", "validating", "done"}
@@ -87,17 +87,35 @@ def validate_document(document: TrackerDocument) -> list[dict[str, Any]]:
         unknown = [blocker for blocker in item["blocked_by"] if blocker not in known_ids]
         _require(not unknown, f"{item['id']}: unknown blockers {unknown}")
 
+    items_by_id = {item["id"]: item for item in normalized_items}
+    visiting: set[str] = set()
+    visited: set[str] = set()
+    stack: list[str] = []
+
+    def _visit(item_id: str) -> None:
+        if item_id in visited:
+            return
+        if item_id in visiting:
+            cycle_start = stack.index(item_id)
+            cycle = " -> ".join(stack[cycle_start:] + [item_id])
+            raise ValidationError(f"dependency cycle detected involving {cycle}")
+        visiting.add(item_id)
+        stack.append(item_id)
+        for blocker in items_by_id[item_id]["blocked_by"]:
+            _visit(blocker)
+        stack.pop()
+        visiting.remove(item_id)
+        visited.add(item_id)
+
+    for item_id in sorted(items_by_id):
+        _visit(item_id)
+
     return normalized_items
-
-
-
-def validate_or_raise(document: TrackerDocument) -> list[dict[str, Any]]:
-    return validate_document(document)
 
 
 
 def summarize_statuses(document: TrackerDocument) -> dict[str, int]:
     counts = {status: 0 for status in sorted(ALLOWED_STATUSES)}
-    for item in iter_items(document):
-        counts[item["status"]] += 1
+    for item in list_items(document):
+        counts[item["status"]] = counts.get(item["status"], 0) + 1
     return counts

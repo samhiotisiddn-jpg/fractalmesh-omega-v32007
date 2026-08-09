@@ -54,16 +54,40 @@ class PrioritizationTests(unittest.TestCase):
 
     def test_quick_wins_filters_to_high_impact_low_risk_low_depth(self) -> None:
         wins = quick_wins(self.items)
-        self.assertEqual([entry["id"] for entry in wins], ["dependent-optimization", "quick-win"])
+        self.assertEqual([entry["id"] for entry in wins], ["quick-win"])
 
     def test_blocked_report_lists_items_with_active_blockers(self) -> None:
         blocked = blocked_items_report(self.items)
         self.assertEqual(blocked[0]["id"], "dependent-optimization")
         self.assertEqual(blocked[0]["active_blockers"], ["base-kernel"])
 
+    def test_blocked_report_ignores_status_only_blocked_items(self) -> None:
+        blocked = blocked_items_report(
+            self.items
+            + [
+                {
+                    "id": "unblocked-status-item",
+                    "title": "Status says blocked",
+                    "upstream_ref": "#4",
+                    "section": "Indexer",
+                    "status": "blocked",
+                    "priority": "p2",
+                    "impact": "medium",
+                    "risk": "low",
+                    "blocked_by": [],
+                    "updated_at": "2026-08-01T00:00:00Z",
+                }
+            ]
+        )
+        self.assertNotIn("unblocked-status-item", [entry["id"] for entry in blocked])
+
     def test_report_includes_stale_in_progress_items(self) -> None:
         report = generate_report(self.items, stale_days=7)
         self.assertEqual(report["stale_items"][0]["id"], "quick-win")
+
+    def test_report_uses_latest_tracker_update_as_timestamp(self) -> None:
+        report = generate_report(self.items, stale_days=7)
+        self.assertEqual(report["generated_at"], "2026-08-01T00:00:00+00:00")
 
 
 if __name__ == "__main__":

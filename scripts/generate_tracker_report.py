@@ -17,17 +17,22 @@ def main() -> int:
     parser.add_argument("--fail-on-stale", action="store_true", help="Exit non-zero if stale blocked/in-progress items are found")
     args = parser.parse_args()
 
-    analyze_parser = build_parser()
-    analyze_args = analyze_parser.parse_args(["--data", args.data, "analyze"])
-    report_args = analyze_parser.parse_args(
-        [
-            "--data",
-            args.data,
-            "report",
-            "--stale-days",
-            str(args.stale_days),
-            *( ["--fail-on-stale"] if args.fail_on_stale else [] ),
-        ]
+    cli_parser = build_parser()
+    analyze_defaults = cli_parser.parse_args(["analyze"])
+    analyze_args = argparse.Namespace(
+        **{
+            **vars(analyze_defaults),
+            "data": args.data,
+        }
+    )
+    report_defaults = cli_parser.parse_args(["report"])
+    report_args = argparse.Namespace(
+        **{
+            **vars(report_defaults),
+            "data": args.data,
+            "stale_days": args.stale_days,
+            "fail_on_stale": args.fail_on_stale,
+        }
     )
     analyze_code = handle_analyze(analyze_args)
     report_code = handle_report(report_args)

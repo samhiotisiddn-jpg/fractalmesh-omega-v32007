@@ -24,6 +24,16 @@ class ValidationTests(unittest.TestCase):
         with self.assertRaises(ValidationError):
             validate_document(broken)
 
+    def test_validation_rejects_dependency_cycles(self) -> None:
+        document = load_tracker(DATA_FILE)
+        broken = copy.deepcopy(document)
+        first = broken["sections"][0]["items"][0]
+        second = broken["sections"][0]["items"][1]
+        first["blocked_by"] = [second["id"]]
+        second["blocked_by"] = [first["id"]]
+        with self.assertRaises(ValidationError):
+            validate_document(broken)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -11,5 +11,5 @@ def load_tracker(path: str | Path) -> TrackerDocument:
         return json.load(handle)
 
 
-def iter_items(document: TrackerDocument) -> list[TrackerItem]:
+def list_items(document: TrackerDocument) -> list[TrackerItem]:
     return [item for section in document["sections"] for item in section["items"]]

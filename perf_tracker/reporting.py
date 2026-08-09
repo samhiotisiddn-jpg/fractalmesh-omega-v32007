@@ -6,7 +6,12 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-from perf_tracker.prioritization import blocked_items_report, critical_path_candidates, quick_wins
+from perf_tracker.prioritization import (
+    _build_path_resolver,
+    blocked_items_report_with_context,
+    critical_path_candidates_with_context,
+    quick_wins_with_context,
+)
 
 
 
@@ -15,6 +20,11 @@ def _parse_dt(value: str | None) -> datetime | None:
         return None
     return datetime.fromisoformat(value.replace("Z", "+00:00"))
 
+
+def _default_now(items: list[dict[str, Any]]) -> datetime:
+    timestamps = [_parse_dt(item.get("updated_at")) for item in items]
+    known = [timestamp for timestamp in timestamps if timestamp is not None]
+    return max(known) if known else datetime.now(timezone.utc)
 
 
 def _score_action(item: dict[str, Any]) -> tuple[int, int, str]:
@@ -25,21 +35,23 @@ def _score_action(item: dict[str, Any]) -> tuple[int, int, str]:
 
 
 def generate_report(items: list[dict[str, Any]], stale_days: int = 7, now: datetime | None = None) -> dict[str, Any]:
-    now = now or datetime.now(timezone.utc)
-    section_status_counts: dict[str, dict[str, int]] = defaultdict(lambda: Counter())
+    now = now or _default_now(items)
+    items_by_id = {item["id"]: item for item in items}
+    resolver = _build_path_resolver(items_by_id)
+    section_status_counts: dict[str, dict[str, int]] = defaultdict(Counter)
     global_status_counts: Counter[str] = Counter()
 
     for item in items:
         section_status_counts[item["section"]][item["status"]] += 1
         global_status_counts[item["status"]] += 1
 
-    critical = critical_path_candidates(items, limit=5)
-    wins = quick_wins(items, limit=5)
-    blocked = blocked_items_report(items)
+    critical = critical_path_candidates_with_context(items, items_by_id, limit=5, resolver=resolver)
+    wins = quick_wins_with_context(items, items_by_id, limit=5, resolver=resolver)
+    blocked = blocked_items_report_with_context(items, items_by_id, resolver=resolver)
 
     next_actions_by_id: dict[str, dict[str, Any]] = {}
     for entry in wins + critical:
-        item = next(item for item in items if item["id"] == entry["id"])
+        item = items_by_id[entry["id"]]
         if item["status"] != "done":
             next_actions_by_id[item["id"]] = item
     top_next_actions = sorted(next_actions_by_id.values(), key=_score_action)[:5]

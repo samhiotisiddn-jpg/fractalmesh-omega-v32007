@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from functools import lru_cache
-from typing import Any
+from typing import Any, Callable
 
 PRIORITY_WEIGHTS = {"p0": 9, "p1": 6, "p2": 3}
 IMPACT_WEIGHTS = {"high": 9, "medium": 6, "low": 3}
@@ -24,8 +24,9 @@ def active_blockers(item: dict[str, Any], items_by_id: dict[str, dict[str, Any]]
     return [blocker for blocker in item["blocked_by"] if _is_active(items_by_id[blocker])]
 
 
+def _build_path_resolver(items_by_id: dict[str, dict[str, Any]]) -> Callable[[str], tuple[str, ...]]:
+    """Create a cached resolver for dependency chains within one item graph."""
 
-def build_dependency_path(item_id: str, items_by_id: dict[str, dict[str, Any]]) -> list[str]:
     @lru_cache(maxsize=None)
     def _path(current_id: str) -> tuple[str, ...]:
         blockers = active_blockers(items_by_id[current_id], items_by_id)
@@ -37,22 +38,41 @@ def build_dependency_path(item_id: str, items_by_id: dict[str, dict[str, Any]]) 
         )
         return (current_id, *best)
 
-    return list(_path(item_id))
+    return _path
 
 
+def build_dependency_path(
+    item_id: str,
+    items_by_id: dict[str, dict[str, Any]],
+    resolver: Callable[[str], tuple[str, ...]] | None = None,
+) -> list[str]:
+    resolver = resolver or _build_path_resolver(items_by_id)
+    return list(resolver(item_id))
 
-def dependency_depth(item: dict[str, Any], items_by_id: dict[str, dict[str, Any]]) -> int:
-    return max(len(build_dependency_path(item["id"], items_by_id)) - 1, 0)
 
-
+def dependency_depth(
+    item: dict[str, Any],
+    items_by_id: dict[str, dict[str, Any]],
+    resolver: Callable[[str], tuple[str, ...]] | None = None,
+) -> int:
+    return max(len(build_dependency_path(item["id"], items_by_id, resolver=resolver)) - 1, 0)
 
 def critical_path_candidates(items: list[dict[str, Any]], limit: int = 10) -> list[dict[str, Any]]:
-    items_by_id = _index(items)
+    return critical_path_candidates_with_context(items, _index(items), limit=limit)
+
+
+def critical_path_candidates_with_context(
+    items: list[dict[str, Any]],
+    items_by_id: dict[str, dict[str, Any]],
+    limit: int = 10,
+    resolver: Callable[[str], tuple[str, ...]] | None = None,
+) -> list[dict[str, Any]]:
+    resolver = resolver or _build_path_resolver(items_by_id)
     ranked: list[dict[str, Any]] = []
     for item in items:
         if not _is_active(item):
             continue
-        path = build_dependency_path(item["id"], items_by_id)
+        path = build_dependency_path(item["id"], items_by_id, resolver=resolver)
         score = (
             PRIORITY_WEIGHTS[item["priority"]] * 2
             + IMPACT_WEIGHTS[item["impact"]] * 2
@@ -75,12 +95,23 @@ def critical_path_candidates(items: list[dict[str, Any]], limit: int = 10) -> li
 
 
 def quick_wins(items: list[dict[str, Any]], limit: int = 10) -> list[dict[str, Any]]:
-    items_by_id = _index(items)
+    return quick_wins_with_context(items, _index(items), limit=limit)
+
+
+def quick_wins_with_context(
+    items: list[dict[str, Any]],
+    items_by_id: dict[str, dict[str, Any]],
+    limit: int = 10,
+    resolver: Callable[[str], tuple[str, ...]] | None = None,
+) -> list[dict[str, Any]]:
+    resolver = resolver or _build_path_resolver(items_by_id)
     candidates: list[dict[str, Any]] = []
     for item in items:
         if not _is_active(item) or item["impact"] != "high" or item["risk"] != "low":
             continue
-        depth = dependency_depth(item, items_by_id)
+        if active_blockers(item, items_by_id):
+            continue
+        depth = dependency_depth(item, items_by_id, resolver=resolver)
         if depth > 1:
             continue
         score = PRIORITY_WEIGHTS[item["priority"]] + IMPACT_WEIGHTS[item["impact"]] + RISK_WEIGHTS[item["risk"]] - depth
@@ -99,11 +130,19 @@ def quick_wins(items: list[dict[str, Any]], limit: int = 10) -> list[dict[str, A
 
 
 def blocked_items_report(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    items_by_id = _index(items)
+    return blocked_items_report_with_context(items, _index(items))
+
+
+def blocked_items_report_with_context(
+    items: list[dict[str, Any]],
+    items_by_id: dict[str, dict[str, Any]],
+    resolver: Callable[[str], tuple[str, ...]] | None = None,
+) -> list[dict[str, Any]]:
+    resolver = resolver or _build_path_resolver(items_by_id)
     blocked: list[dict[str, Any]] = []
     for item in items:
         blockers = active_blockers(item, items_by_id)
-        if item["status"] == "blocked" or blockers:
+        if blockers:
             blocked.append(
                 {
                     "id": item["id"],
@@ -111,7 +150,7 @@ def blocked_items_report(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
                     "section": item["section"],
                     "status": item["status"],
                     "active_blockers": blockers,
-                    "dependency_depth": dependency_depth(item, items_by_id),
+                    "dependency_depth": dependency_depth(item, items_by_id, resolver=resolver),
                 }
             )
     return sorted(blocked, key=lambda entry: (-entry["dependency_depth"], entry["id"]))

@@ -7,7 +7,7 @@ from pathlib import Path
 from perf_tracker.io import load_tracker
 from perf_tracker.prioritization import blocked_items_report, critical_path_candidates, quick_wins
 from perf_tracker.reporting import generate_report, write_json, write_markdown
-from perf_tracker.validation import summarize_statuses, validate_or_raise
+from perf_tracker.validation import summarize_statuses, validate_document
 
 DEFAULT_DATA = Path("tracker/deepseek_v4_perf_tracker.json")
 DEFAULT_PRIORITY_JSON = Path("docs/status/priorities.json")
@@ -42,13 +42,13 @@ def build_parser() -> argparse.ArgumentParser:
 
 def _load_and_validate(data_path: str) -> list[dict[str, object]]:
     document = load_tracker(data_path)
-    return validate_or_raise(document)
+    return validate_document(document)
 
 
 
 def handle_validate(args: argparse.Namespace) -> int:
     document = load_tracker(args.data)
-    items = validate_or_raise(document)
+    items = validate_document(document)
     counts = summarize_statuses(document)
     print(f"Validated {len(items)} items from {args.data}")
     print(json.dumps(counts, indent=2))
