@@ -1,0 +1,844 @@
+{
+  "source_issue": "sgl-project/sglang#33636",
+  "source_title": "[NVIDIA] DeepSeek V4 Perf Tracking",
+  "sections": [
+    {
+      "name": "Attention & compression kernels",
+      "items": [
+        {
+          "id": "trtllm-dsv4-attention-sm100-103",
+          "title": "Integrate TRT-LLM DSv4 attention for SM100/103",
+          "upstream_ref": "#30805",
+          "section": "Attention & compression kernels",
+          "status": "todo",
+          "priority": "p0",
+          "impact": "high",
+          "risk": "medium",
+          "blocked_by": [],
+          "owner": null,
+          "notes": null,
+          "updated_at": "2026-08-09T16:26:07Z"
+        },
+        {
+          "id": "mtp-trtllm-sparse-attention",
+          "title": "Enable MTP on the TRT-LLM sparse attention path",
+          "upstream_ref": "#32973",
+          "section": "Attention & compression kernels",
+          "status": "todo",
+          "priority": "p0",
+          "impact": "high",
+          "risk": "medium",
+          "blocked_by": [
+            "trtllm-dsv4-attention-sm100-103"
+          ],
+          "owner": null,
+          "notes": null,
+          "updated_at": "2026-08-09T16:26:07Z"
+        },
+        {
+          "id": "fused-norm-rope-fp8-store",
+          "title": "Fused norm + RoPE + uniform fp8 store for TRT-LLM DSv4 sparse attention",
+          "upstream_ref": "#32975",
+          "section": "Attention & compression kernels",
+          "status": "todo",
+          "priority": "p1",
+          "impact": "high",
+          "risk": "high",
+          "blocked_by": [
+            "trtllm-dsv4-attention-sm100-103"
+          ],
+          "owner": null,
+          "notes": null,
+          "updated_at": "2026-08-09T16:26:07Z"
+        },
+        {
+          "id": "flashmla-norm-rope-ilp",
+          "title": "FlashMLA norm-rope: K-tokens-per-block ILP to hide load latency",
+          "upstream_ref": "#33358",
+          "section": "Attention & compression kernels",
+          "status": "todo",
+          "priority": "p1",
+          "impact": "high",
+          "risk": "low",
+          "blocked_by": [],
+          "owner": null,
+          "notes": null,
+          "updated_at": "2026-08-09T16:26:07Z"
+        },
+        {
+          "id": "q8kv8-sparse-mla-prefill-sm90",
+          "title": "Q8KV8 sparse MLA prefill backend on SM90",
+          "upstream_ref": "#32327",
+          "section": "Attention & compression kernels",
+          "status": "todo",
+          "priority": "p0",
+          "impact": "high",
+          "risk": "medium",
+          "blocked_by": [],
+          "owner": null,
+          "notes": "Related upstream note: see #25746.",
+          "updated_at": "2026-08-09T16:26:07Z"
+        },
+        {
+          "id": "split-mixed-chunk-fp8-paged-mla",
+          "title": "Split mixed-chunk attention: route decode tokens to the fp8 paged MLA kernel",
+          "upstream_ref": "#30338",
+          "section": "Attention & compression kernels",
+          "status": "todo",
+          "priority": "p1",
+          "impact": "high",
+          "risk": "medium",
+          "blocked_by": [
+            "q8kv8-sparse-mla-prefill-sm90"
+          ],
+          "owner": null,
+          "notes": null,
+          "updated_at": "2026-08-09T16:26:07Z"
+        },
+        {
+          "id": "optimize-c128-epilogue",
+          "title": "Optimize the c128 epilogue",
+          "upstream_ref": "#26671",
+          "section": "Attention & compression kernels",
+          "status": "todo",
+          "priority": "p1",
+          "impact": "high",
+          "risk": "low",
+          "blocked_by": [],
+          "owner": null,
+          "notes": null,
+          "updated_at": "2026-08-09T16:26:07Z"
+        }
+      ]
+    },
+    {
+      "name": "Indexer & top-k",
+      "items": [
+        {
+          "id": "occupancy-tuning-dsa-indexer-fp8-q",
+          "title": "Occupancy tuning for the DSA indexer fp8-quant Q kernel",
+          "upstream_ref": "#32755",
+          "section": "Indexer & top-k",
+          "status": "todo",
+          "priority": "p1",
+          "impact": "high",
+          "risk": "low",
+          "blocked_by": [],
+          "owner": null,
+          "notes": null,
+          "updated_at": "2026-08-09T16:26:07Z"
+        },
+        {
+          "id": "rewrite-paged-mqa-metadata",
+          "title": "Rewrite `paged_mqa_metadata`",
+          "upstream_ref": "#25855",
+          "section": "Indexer & top-k",
+          "status": "todo",
+          "priority": "p1",
+          "impact": "high",
+          "risk": "medium",
+          "blocked_by": [],
+          "owner": null,
+          "notes": null,
+          "updated_at": "2026-08-09T16:26:07Z"
+        },
+        {
+          "id": "bound-c4-indexer-logits-memory",
+          "title": "Bound C4 indexer logits peak memory via varlen routing + query-axis chunking",
+          "upstream_ref": "#33288",
+          "section": "Indexer & top-k",
+          "status": "todo",
+          "priority": "p1",
+          "impact": "high",
+          "risk": "medium",
+          "blocked_by": [
+            "rewrite-paged-mqa-metadata"
+          ],
+          "owner": null,
+          "notes": null,
+          "updated_at": "2026-08-09T16:26:07Z"
+        },
+        {
+          "id": "batched-round-robin-cp-prefill-indexer",
+          "title": "Batched and round-robin CP prefill in the non-paged indexer",
+          "upstream_ref": "#33570",
+          "section": "Indexer & top-k",
+          "status": "todo",
+          "priority": "p1",
+          "impact": "high",
+          "risk": "medium",
+          "blocked_by": [
+            "indexcache-pd-cp-hicache"
+          ],
+          "owner": null,
+          "notes": null,
+          "updated_at": "2026-08-09T16:26:07Z"
+        },
+        {
+          "id": "indexcache-pd-cp-hicache",
+          "title": "IndexCache with PD, CP, and HiCache coverage",
+          "upstream_ref": "#32771",
+          "section": "Indexer & top-k",
+          "status": "todo",
+          "priority": "p1",
+          "impact": "high",
+          "risk": "medium",
+          "blocked_by": [],
+          "owner": null,
+          "notes": "Forward-port target of #26274.",
+          "updated_at": "2026-08-09T16:26:07Z"
+        }
+      ]
+    },
+    {
+      "name": "mHC",
+      "items": [
+        {
+          "id": "flashinfer-mhc-fusion",
+          "title": "FlashInfer mHC fusion",
+          "upstream_ref": "#33616",
+          "section": "mHC",
+          "status": "todo",
+          "priority": "p1",
+          "impact": "high",
+          "risk": "medium",
+          "blocked_by": [],
+          "owner": null,
+          "notes": "TileLang remains faster today; retain as fallback path when TileLang is unavailable.",
+          "updated_at": "2026-08-09T16:26:07Z"
+        }
+      ]
+    },
+    {
+      "name": "MoE & quantization",
+      "items": [
+        {
+          "id": "auto-select-fp4-moe-backends",
+          "title": "Auto-select FP4 MoE backends after A2A normalization",
+          "upstream_ref": "#30952",
+          "section": "MoE & quantization",
+          "status": "todo",
+          "priority": "p1",
+          "impact": "high",
+          "risk": "medium",
+          "blocked_by": [],
+          "owner": null,
+          "notes": null,
+          "updated_at": "2026-08-09T16:26:07Z"
+        },
+        {
+          "id": "keep-fp32-routing-weights-mxfp4-trtllm-moe",
+          "title": "Keep fp32 routing weights in the MXFP4 trtllm MoE",
+          "upstream_ref": "#33608",
+          "section": "MoE & quantization",
+          "status": "todo",
+          "priority": "p1",
+          "impact": "high",
+          "risk": "medium",
+          "blocked_by": [
+            "auto-select-fp4-moe-backends"
+          ],
+          "owner": null,
+          "notes": null,
+          "updated_at": "2026-08-09T16:26:07Z"
+        },
+        {
+          "id": "flashinfer-megamoe-zero-copy-adapter",
+          "title": "FlashInfer MegaMoE, plus the zero-copy adapter path",
+          "upstream_ref": "#31470",
+          "section": "MoE & quantization",
+          "status": "todo",
+          "priority": "p0",
+          "impact": "high",
+          "risk": "high",
+          "blocked_by": [
+            "auto-select-fp4-moe-backends"
+          ],
+          "owner": null,
+          "notes": null,
+          "updated_at": "2026-08-09T16:26:07Z"
+        },
+        {
+          "id": "fused-swiglu-quant-shared-experts",
+          "title": "Fused SwiGLU + quant for shared experts and EP-normal",
+          "upstream_ref": "#27561",
+          "section": "MoE & quantization",
+          "status": "todo",
+          "priority": "p1",
+          "impact": "high",
+          "risk": "medium",
+          "blocked_by": [],
+          "owner": null,
+          "notes": null,
+          "updated_at": "2026-08-09T16:26:07Z"
+        },
+        {
+          "id": "fused-silu-clamp-mul-fp8-quant-ep-moe",
+          "title": "Fused SiLU + clamp + mul + FP8-quant AOT kernel for the EP MoE path",
+          "upstream_ref": "#32058",
+          "section": "MoE & quantization",
+          "status": "todo",
+          "priority": "p1",
+          "impact": "high",
+          "risk": "medium",
+          "blocked_by": [],
+          "owner": null,
+          "notes": null,
+          "updated_at": "2026-08-09T16:26:07Z"
+        }
+      ]
+    },
+    {
+      "name": "Speculative decoding (MTP / DSpark / EAGLE3)",
+      "items": [
+        {
+          "id": "fuse-offline-c128-draft-cleanup",
+          "title": "Fuse offline C128 draft state cleanup into one launch",
+          "upstream_ref": "#32090",
+          "section": "Speculative decoding (MTP / DSpark / EAGLE3)",
+          "status": "todo",
+          "priority": "p1",
+          "impact": "high",
+          "risk": "medium",
+          "blocked_by": [],
+          "owner": null,
+          "notes": null,
+          "updated_at": "2026-08-09T16:26:07Z"
+        },
+        {
+          "id": "skip-unused-draft-metadata",
+          "title": "Skip unused draft metadata",
+          "upstream_ref": "#32194",
+          "section": "Speculative decoding (MTP / DSpark / EAGLE3)",
+          "status": "todo",
+          "priority": "p1",
+          "impact": "high",
+          "risk": "medium",
+          "blocked_by": [
+            "fuse-offline-c128-draft-cleanup"
+          ],
+          "owner": null,
+          "notes": null,
+          "updated_at": "2026-08-09T16:26:07Z"
+        },
+        {
+          "id": "remove-redundant-draft-metadata-copies",
+          "title": "Remove redundant draft metadata copies",
+          "upstream_ref": "#32319",
+          "section": "Speculative decoding (MTP / DSpark / EAGLE3)",
+          "status": "todo",
+          "priority": "p1",
+          "impact": "high",
+          "risk": "medium",
+          "blocked_by": [
+            "skip-unused-draft-metadata"
+          ],
+          "owner": null,
+          "notes": null,
+          "updated_at": "2026-08-09T16:26:07Z"
+        },
+        {
+          "id": "skip-inactive-target-verify-metadata-tails",
+          "title": "Skip inactive target-verify metadata tails",
+          "upstream_ref": "#32526",
+          "section": "Speculative decoding (MTP / DSpark / EAGLE3)",
+          "status": "todo",
+          "priority": "p1",
+          "impact": "high",
+          "risk": "medium",
+          "blocked_by": [
+            "remove-redundant-draft-metadata-copies"
+          ],
+          "owner": null,
+          "notes": null,
+          "updated_at": "2026-08-09T16:26:07Z"
+        },
+        {
+          "id": "fuse-target-verify-metadata-prologue",
+          "title": "Fuse the target-verify metadata prologue",
+          "upstream_ref": "#32656",
+          "section": "Speculative decoding (MTP / DSpark / EAGLE3)",
+          "status": "todo",
+          "priority": "p1",
+          "impact": "high",
+          "risk": "medium",
+          "blocked_by": [
+            "skip-inactive-target-verify-metadata-tails"
+          ],
+          "owner": null,
+          "notes": null,
+          "updated_at": "2026-08-09T16:26:07Z"
+        },
+        {
+          "id": "fuse-compressed-metadata-init",
+          "title": "Fuse compressed metadata initialization",
+          "upstream_ref": "#33387",
+          "section": "Speculative decoding (MTP / DSpark / EAGLE3)",
+          "status": "todo",
+          "priority": "p1",
+          "impact": "high",
+          "risk": "medium",
+          "blocked_by": [
+            "fuse-target-verify-metadata-prologue"
+          ],
+          "owner": null,
+          "notes": null,
+          "updated_at": "2026-08-09T16:26:07Z"
+        },
+        {
+          "id": "fuse-draft-extend-swa-translation",
+          "title": "Fuse draft-extend SWA location translation",
+          "upstream_ref": "#33080",
+          "section": "Speculative decoding (MTP / DSpark / EAGLE3)",
+          "status": "todo",
+          "priority": "p1",
+          "impact": "high",
+          "risk": "medium",
+          "blocked_by": [
+            "fuse-compressed-metadata-init"
+          ],
+          "owner": null,
+          "notes": null,
+          "updated_at": "2026-08-09T16:26:07Z"
+        },
+        {
+          "id": "compile-hc-head-during-cuda-graph-capture",
+          "title": "Compile draft / draft-extend `hc_head` during CUDA graph capture",
+          "upstream_ref": "#32220/#32497",
+          "section": "Speculative decoding (MTP / DSpark / EAGLE3)",
+          "status": "todo",
+          "priority": "p1",
+          "impact": "high",
+          "risk": "medium",
+          "blocked_by": [
+            "fuse-draft-extend-swa-translation"
+          ],
+          "owner": null,
+          "notes": null,
+          "updated_at": "2026-08-09T16:26:07Z"
+        },
+        {
+          "id": "dspark-c128-online-compressor",
+          "title": "DSpark C128 online compressor",
+          "upstream_ref": "#32035",
+          "section": "Speculative decoding (MTP / DSpark / EAGLE3)",
+          "status": "todo",
+          "priority": "p1",
+          "impact": "high",
+          "risk": "medium",
+          "blocked_by": [
+            "compile-hc-head-during-cuda-graph-capture"
+          ],
+          "owner": null,
+          "notes": null,
+          "updated_at": "2026-08-09T16:26:07Z"
+        },
+        {
+          "id": "eagle3-deepseek-v4-flash-0731",
+          "title": "EAGLE3 for DeepSeek-V4-Flash-0731",
+          "upstream_ref": "#33344",
+          "section": "Speculative decoding (MTP / DSpark / EAGLE3)",
+          "status": "todo",
+          "priority": "p1",
+          "impact": "high",
+          "risk": "high",
+          "blocked_by": [],
+          "owner": null,
+          "notes": null,
+          "updated_at": "2026-08-09T16:26:07Z"
+        }
+      ]
+    },
+    {
+      "name": "Communication & context parallelism",
+      "items": [
+        {
+          "id": "flashinfer-mnnvl-pure-allreduce",
+          "title": "FlashInfer MNNVL backend for pure (non-fused) allreduce",
+          "upstream_ref": "#30700",
+          "section": "Communication & context parallelism",
+          "status": "todo",
+          "priority": "p1",
+          "impact": "high",
+          "risk": "medium",
+          "blocked_by": [],
+          "owner": null,
+          "notes": null,
+          "updated_at": "2026-08-09T16:26:07Z"
+        },
+        {
+          "id": "remove-prefill-cp-kv-compressor-materialization",
+          "title": "Remove prefill CP KV and compressor materialization",
+          "upstream_ref": "#33236",
+          "section": "Communication & context parallelism",
+          "status": "todo",
+          "priority": "p1",
+          "impact": "high",
+          "risk": "low",
+          "blocked_by": [],
+          "owner": null,
+          "notes": null,
+          "updated_at": "2026-08-09T16:26:07Z"
+        },
+        {
+          "id": "ag-gemm-moe-rs-overlap-kernels",
+          "title": "`ag_gemm` + `moe_rs` symmetric-memory overlap kernels for CP prefill",
+          "upstream_ref": "#28639",
+          "section": "Communication & context parallelism",
+          "status": "todo",
+          "priority": "p1",
+          "impact": "high",
+          "risk": "medium",
+          "blocked_by": [],
+          "owner": null,
+          "notes": null,
+          "updated_at": "2026-08-09T16:26:07Z"
+        },
+        {
+          "id": "shared-kv-cache-prefill-cp-vmm",
+          "title": "Shared KV cache for prefill CP via VMM",
+          "upstream_ref": "#32059",
+          "section": "Communication & context parallelism",
+          "status": "todo",
+          "priority": "p1",
+          "impact": "high",
+          "risk": "high",
+          "blocked_by": [],
+          "owner": null,
+          "notes": null,
+          "updated_at": "2026-08-09T16:26:07Z"
+        },
+        {
+          "id": "cp-layersplit-common-infra",
+          "title": "CP cache LayerSplit: common infrastructure",
+          "upstream_ref": "#33382",
+          "section": "Communication & context parallelism",
+          "status": "todo",
+          "priority": "p1",
+          "impact": "high",
+          "risk": "medium",
+          "blocked_by": [],
+          "owner": null,
+          "notes": null,
+          "updated_at": "2026-08-09T16:26:07Z"
+        },
+        {
+          "id": "cp-layersplit-full-implementation",
+          "title": "CP cache LayerSplit: full implementation",
+          "upstream_ref": "#29187",
+          "section": "Communication & context parallelism",
+          "status": "todo",
+          "priority": "p1",
+          "impact": "high",
+          "risk": "medium",
+          "blocked_by": [
+            "cp-layersplit-common-infra"
+          ],
+          "owner": null,
+          "notes": null,
+          "updated_at": "2026-08-09T16:26:07Z"
+        },
+        {
+          "id": "cp-v2-strategy",
+          "title": "CP V2 strategy",
+          "upstream_ref": "#33532",
+          "section": "Communication & context parallelism",
+          "status": "todo",
+          "priority": "p1",
+          "impact": "high",
+          "risk": "high",
+          "blocked_by": [
+            "cp-layersplit-full-implementation"
+          ],
+          "owner": null,
+          "notes": null,
+          "updated_at": "2026-08-09T16:26:07Z"
+        },
+        {
+          "id": "decode-context-parallelism-dsv4",
+          "title": "Decode context parallelism for DeepSeek V4",
+          "upstream_ref": "#30416",
+          "section": "Communication & context parallelism",
+          "status": "todo",
+          "priority": "p0",
+          "impact": "high",
+          "risk": "high",
+          "blocked_by": [
+            "cp-v2-strategy"
+          ],
+          "owner": null,
+          "notes": null,
+          "updated_at": "2026-08-09T16:26:07Z"
+        },
+        {
+          "id": "fix-non-ep-tbo-attention-tp-gt1",
+          "title": "Fix non-EP TBO for attention TP > 1",
+          "upstream_ref": "#33250",
+          "section": "Communication & context parallelism",
+          "status": "todo",
+          "priority": "p1",
+          "impact": "high",
+          "risk": "medium",
+          "blocked_by": [],
+          "owner": null,
+          "notes": "Blocked-path guard noted upstream in #33217.",
+          "updated_at": "2026-08-09T16:26:07Z"
+        },
+        {
+          "id": "fix-dp-attention-gather-semantics",
+          "title": "Fix DP-attention gather semantics",
+          "upstream_ref": "#31700",
+          "section": "Communication & context parallelism",
+          "status": "todo",
+          "priority": "p1",
+          "impact": "high",
+          "risk": "medium",
+          "blocked_by": [],
+          "owner": null,
+          "notes": null,
+          "updated_at": "2026-08-09T16:26:07Z"
+        },
+        {
+          "id": "support-dsv4-in-pdmux",
+          "title": "Support DeepSeek V4 in PDMux",
+          "upstream_ref": "#30885",
+          "section": "Communication & context parallelism",
+          "status": "todo",
+          "priority": "p1",
+          "impact": "high",
+          "risk": "medium",
+          "blocked_by": [],
+          "owner": null,
+          "notes": null,
+          "updated_at": "2026-08-09T16:26:07Z"
+        }
+      ]
+    },
+    {
+      "name": "CUDA graph & scheduling",
+      "items": [
+        {
+          "id": "enable-prefill-bcg-v4-memory-reserve",
+          "title": "Enable prefill BCG: two-pass capture + V4-aware memory reserve",
+          "upstream_ref": "#29985",
+          "section": "CUDA graph & scheduling",
+          "status": "todo",
+          "priority": "p0",
+          "impact": "high",
+          "risk": "high",
+          "blocked_by": [],
+          "owner": null,
+          "notes": null,
+          "updated_at": "2026-08-09T16:26:07Z"
+        },
+        {
+          "id": "alt-stream-during-bcg-prefill",
+          "title": "Alt stream during BCG prefill",
+          "upstream_ref": "#29070",
+          "section": "CUDA graph & scheduling",
+          "status": "todo",
+          "priority": "p1",
+          "impact": "high",
+          "risk": "medium",
+          "blocked_by": [
+            "enable-prefill-bcg-v4-memory-reserve"
+          ],
+          "owner": null,
+          "notes": null,
+          "updated_at": "2026-08-09T16:26:07Z"
+        },
+        {
+          "id": "breakable-cuda-graph-mixed-chunk-prefill",
+          "title": "Breakable CUDA graph for mixed-chunk prefill",
+          "upstream_ref": "#30420",
+          "section": "CUDA graph & scheduling",
+          "status": "todo",
+          "priority": "p1",
+          "impact": "high",
+          "risk": "medium",
+          "blocked_by": [
+            "enable-prefill-bcg-v4-memory-reserve"
+          ],
+          "owner": null,
+          "notes": null,
+          "updated_at": "2026-08-09T16:26:07Z"
+        },
+        {
+          "id": "overlap-scheduling-online-c128-mtp",
+          "title": "Overlap scheduling for online C128 MTP",
+          "upstream_ref": "#30497",
+          "section": "CUDA graph & scheduling",
+          "status": "todo",
+          "priority": "p1",
+          "impact": "high",
+          "risk": "medium",
+          "blocked_by": [
+            "compile-hc-head-during-cuda-graph-capture"
+          ],
+          "owner": null,
+          "notes": null,
+          "updated_at": "2026-08-09T16:26:07Z"
+        }
+      ]
+    },
+    {
+      "name": "Memory & KV capacity",
+      "items": [
+        {
+          "id": "swa-recompute-trailing-window",
+          "title": "SWA recompute",
+          "upstream_ref": "#31713",
+          "section": "Memory & KV capacity",
+          "status": "todo",
+          "priority": "p0",
+          "impact": "high",
+          "risk": "medium",
+          "blocked_by": [],
+          "owner": null,
+          "notes": null,
+          "updated_at": "2026-08-09T16:26:07Z"
+        },
+        {
+          "id": "decode-radix-cache-mtp-pd-disagg",
+          "title": "Decode radix cache with MTP under P/D disagg",
+          "upstream_ref": "#31097",
+          "section": "Memory & KV capacity",
+          "status": "todo",
+          "priority": "p1",
+          "impact": "high",
+          "risk": "medium",
+          "blocked_by": [
+            "swa-recompute-trailing-window"
+          ],
+          "owner": null,
+          "notes": null,
+          "updated_at": "2026-08-09T16:26:07Z"
+        },
+        {
+          "id": "bf16-c4-c128-compressed-state-storage",
+          "title": "BF16 C4/C128 compressed-state storage",
+          "upstream_ref": "#24041",
+          "section": "Memory & KV capacity",
+          "status": "todo",
+          "priority": "p1",
+          "impact": "high",
+          "risk": "medium",
+          "blocked_by": [],
+          "owner": null,
+          "notes": null,
+          "updated_at": "2026-08-09T16:26:07Z"
+        },
+        {
+          "id": "size-swa-state-pool-by-storage-page",
+          "title": "Size the SWA state pool by storage page size, not the model window",
+          "upstream_ref": "#30371",
+          "section": "Memory & KV capacity",
+          "status": "todo",
+          "priority": "p1",
+          "impact": "high",
+          "risk": "medium",
+          "blocked_by": [],
+          "owner": null,
+          "notes": null,
+          "updated_at": "2026-08-09T16:26:07Z"
+        }
+      ]
+    },
+    {
+      "name": "Docs & recipes",
+      "items": [
+        {
+          "id": "gb300-fp4-multinode-pd-recipes",
+          "title": "GB300 FP4 multi-node PD recipes for DeepSeek-V4-Pro",
+          "upstream_ref": "#31377",
+          "section": "Docs & recipes",
+          "status": "todo",
+          "priority": "p2",
+          "impact": "medium",
+          "risk": "low",
+          "blocked_by": [],
+          "owner": null,
+          "notes": null,
+          "updated_at": "2026-08-09T16:26:07Z"
+        },
+        {
+          "id": "slurm-cluster-cookbook-deployment",
+          "title": "Slurm cluster deployment in the cookbook",
+          "upstream_ref": "#30996",
+          "section": "Docs & recipes",
+          "status": "todo",
+          "priority": "p2",
+          "impact": "medium",
+          "risk": "low",
+          "blocked_by": [],
+          "owner": null,
+          "notes": null,
+          "updated_at": "2026-08-09T16:26:07Z"
+        },
+        {
+          "id": "switch-v4-flash-cookbook-to-flashinfer-mxfp4",
+          "title": "Switch the V4-Flash cookbook from Marlin to `flashinfer_mxfp4`",
+          "upstream_ref": "#32783",
+          "section": "Docs & recipes",
+          "status": "todo",
+          "priority": "p2",
+          "impact": "medium",
+          "risk": "low",
+          "blocked_by": [],
+          "owner": null,
+          "notes": null,
+          "updated_at": "2026-08-09T16:26:07Z"
+        }
+      ]
+    },
+    {
+      "name": "CI & bug tracking",
+      "items": [
+        {
+          "id": "add-dsv4-nvfp4-tests",
+          "title": "Add DSV4 NVFP4 tests",
+          "upstream_ref": "#28966",
+          "section": "CI & bug tracking",
+          "status": "todo",
+          "priority": "p0",
+          "impact": "high",
+          "risk": "low",
+          "blocked_by": [],
+          "owner": "perf-ci",
+          "notes": null,
+          "updated_at": "2026-08-09T16:26:07Z"
+        },
+        {
+          "id": "nightly-aime25-dsv4-pro-b200",
+          "title": "Nightly AIME25 for DeepSeek-V4-Pro on B200",
+          "upstream_ref": "#24891",
+          "section": "CI & bug tracking",
+          "status": "todo",
+          "priority": "p0",
+          "impact": "medium",
+          "risk": "low",
+          "blocked_by": [
+            "add-dsv4-nvfp4-tests"
+          ],
+          "owner": "perf-ci",
+          "notes": null,
+          "updated_at": "2026-08-09T16:26:07Z"
+        },
+        {
+          "id": "flashinfer-trtllm-moe-runner-asserts-b200",
+          "title": "`flashinfer_trtllm` MoE runner asserts on DeepSeek-V4-Flash on B200",
+          "upstream_ref": "#26324",
+          "section": "CI & bug tracking",
+          "status": "todo",
+          "priority": "p1",
+          "impact": "medium",
+          "risk": "low",
+          "blocked_by": [],
+          "owner": null,
+          "notes": null,
+          "updated_at": "2026-08-09T16:26:07Z"
+        }
+      ]
+    }
+  ]
+}
