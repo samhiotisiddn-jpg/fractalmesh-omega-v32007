@@ -36,3 +36,25 @@ jobs:
       - name: Check stale items
         continue-on-error: ${{ github.event_name == 'schedule' || github.event.inputs.stale_warning_only == 'true' }}
         run: python scripts/generate_tracker_report.py --data tracker/deepseek_v4_perf_tracker.json --fail-on-stale
+
+  fractalmesh-tests:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -e ".[dev]"
+
+      - name: Run Fractalmesh tests
+        run: pytest tests/fractalmesh/ --cov=fractalmesh --cov-report=term-missing
+
+      - name: Run Ruff
+        run: ruff check fractalmesh/
