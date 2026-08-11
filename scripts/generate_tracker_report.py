@@ -2,8 +2,8 @@
 from __future__ import annotations
 
 import argparse
-from pathlib import Path
 import sys
+from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
@@ -14,7 +14,9 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Generate DeepSeek V4 tracker outputs")
     parser.add_argument("--data", default="tracker/deepseek_v4_perf_tracker.json", help="Path to tracker JSON data")
     parser.add_argument("--stale-days", type=int, default=7, help="Age in days for stale blocked/in-progress items")
-    parser.add_argument("--fail-on-stale", action="store_true", help="Exit non-zero if stale blocked/in-progress items are found")
+    parser.add_argument(
+        "--fail-on-stale", action="store_true", help="Exit non-zero if stale blocked/in-progress items are found"
+    )
     args = parser.parse_args()
 
     cli_parser = build_parser()

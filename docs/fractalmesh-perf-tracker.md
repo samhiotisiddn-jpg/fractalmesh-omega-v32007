@@ -13,10 +13,32 @@ This repository mirrors and operationalizes the upstream DeepSeek V4 NVIDIA perf
 
 ```bash
 cd <repo-root>
-python scripts/validate_tracker.py --data tracker/deepseek_v4_perf_tracker.json validate
-python scripts/generate_tracker_report.py --data tracker/deepseek_v4_perf_tracker.json
-python -m unittest discover -s tests -v
+python -m pip install -e '.[dev]'
+python -m perf_tracker validate --data tracker/deepseek_v4_perf_tracker.json
+python -m perf_tracker analyze --data tracker/deepseek_v4_perf_tracker.json
+python -m perf_tracker report --data tracker/deepseek_v4_perf_tracker.json
+python -m perf_tracker migrate
+pytest
 ```
+
+## CLI safety features
+
+- JSON input loads are guarded with a maximum file size limit (default `50 MB`) and structural limits to reduce resource-exhaustion risk.
+- CLI path handling rejects traversal patterns (`..`) for relative paths.
+- Relative paths must resolve within this repository root.
+- `analyze` and `report` support `--dry-run` to print output destinations without writing files.
+
+## SQLite backend
+
+Optional local storage is available via `perf_tracker.store` and CLI migration:
+
+```bash
+python -m perf_tracker migrate --db-path tracker/perf_tracker.db
+```
+
+Environment variables (see `.env.example`):
+- `PERF_TRACKER_DB_PATH`
+- `PERF_TRACKER_MAX_JSON_BYTES`
 
 ## Output files
 
@@ -33,8 +55,6 @@ It will:
 - fail if required fields or blocker references are invalid,
 - optionally warn instead of fail on stale `blocked` / `in_progress` items.
 
-## Suggested execution order
+## Security reporting
 
-1. Take quick wins first: high impact, low risk, shallow dependency depth.
-2. Then work the critical path from the root blockers outward.
-3. Use the blocked-items report to resolve prerequisite work before opening larger upstream contribution packets.
+See `.github/SECURITY.md` for coordinated vulnerability disclosure instructions.
