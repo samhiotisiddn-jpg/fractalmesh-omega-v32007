@@ -6,13 +6,13 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+from perf_tracker.io import safe_write_text
 from perf_tracker.prioritization import (
     _build_path_resolver,
     blocked_items_report_with_context,
     critical_path_candidates_with_context,
     quick_wins_with_context,
 )
-
 
 
 def _parse_dt(value: str | None) -> datetime | None:
@@ -31,7 +31,6 @@ def _score_action(item: dict[str, Any]) -> tuple[int, int, str]:
     status_order = {"in_progress": 0, "validating": 1, "todo": 2, "blocked": 3, "done": 4}
     priority_order = {"p0": 0, "p1": 1, "p2": 2}
     return (status_order[item["status"]], priority_order[item["priority"]], item["id"])
-
 
 
 def generate_report(items: list[dict[str, Any]], stale_days: int = 7, now: datetime | None = None) -> dict[str, Any]:
@@ -66,7 +65,12 @@ def generate_report(items: list[dict[str, Any]], stale_days: int = 7, now: datet
         if updated_at.timestamp() < stale_cutoff:
             stale_items.append(item)
 
-    active_items = global_status_counts["todo"] + global_status_counts["blocked"] + global_status_counts["in_progress"] + global_status_counts["validating"]
+    active_items = (
+        global_status_counts["todo"]
+        + global_status_counts["blocked"]
+        + global_status_counts["in_progress"]
+        + global_status_counts["validating"]
+    )
     executive_summary = {
         "total_items": len(items),
         "active_items": active_items,
@@ -80,7 +84,9 @@ def generate_report(items: list[dict[str, Any]], stale_days: int = 7, now: datet
         "generated_at": now.isoformat(),
         "executive_summary": executive_summary,
         "global_status_counts": dict(sorted(global_status_counts.items())),
-        "section_status_counts": {section: dict(sorted(counts.items())) for section, counts in sorted(section_status_counts.items())},
+        "section_status_counts": {
+            section: dict(sorted(counts.items())) for section, counts in sorted(section_status_counts.items())
+        },
         "critical_path_candidates": critical,
         "quick_wins": wins,
         "blocked_items": blocked,
@@ -116,14 +122,8 @@ def generate_report(items: list[dict[str, Any]], stale_days: int = 7, now: datet
     }
 
 
-
 def write_json(path: str | Path, payload: dict[str, Any]) -> None:
-    target = Path(path)
-    target.parent.mkdir(parents=True, exist_ok=True)
-    with target.open("w", encoding="utf-8") as handle:
-        json.dump(payload, handle, indent=2)
-        handle.write("\n")
-
+    safe_write_text(path, json.dumps(payload, indent=2) + "\n")
 
 
 def render_markdown(report: dict[str, Any]) -> str:
@@ -180,7 +180,13 @@ def render_markdown(report: dict[str, Any]) -> str:
     _append_table(
         "Blocked items",
         report["blocked_items"],
-        [("id", "ID"), ("status", "Status"), ("dependency_depth", "Depth"), ("active_blockers", "Active blockers"), ("title", "Title")],
+        [
+            ("id", "ID"),
+            ("status", "Status"),
+            ("dependency_depth", "Depth"),
+            ("active_blockers", "Active blockers"),
+            ("title", "Title"),
+        ],
     )
     _append_table(
         "Items missing owners",
@@ -196,8 +202,5 @@ def render_markdown(report: dict[str, Any]) -> str:
     return "\n".join(lines)
 
 
-
 def write_markdown(path: str | Path, report: dict[str, Any]) -> None:
-    target = Path(path)
-    target.parent.mkdir(parents=True, exist_ok=True)
-    target.write_text(render_markdown(report), encoding="utf-8")
+    safe_write_text(path, render_markdown(report))
