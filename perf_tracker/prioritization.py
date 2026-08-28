@@ -9,34 +9,56 @@ RISK_WEIGHTS = {"low": 3, "medium": 2, "high": 1}
 ACTIVE_STATUSES = {"todo", "blocked", "in_progress", "validating"}
 
 
-
 def _index(items: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
     return {item["id"]: item for item in items}
 
 
-
 def _is_active(item: dict[str, Any]) -> bool:
-    return item["status"] in ACTIVE_STATUSES
-
+    return item.get("status") in ACTIVE_STATUSES
 
 
 def active_blockers(item: dict[str, Any], items_by_id: dict[str, dict[str, Any]]) -> list[str]:
-    return [blocker for blocker in item["blocked_by"] if _is_active(items_by_id[blocker])]
+    blockers = item.get("blocked_by", [])
+    return [
+        blocker
+        for blocker in blockers
+        if blocker in items_by_id and _is_active(items_by_id[blocker])
+    ]
 
 
 def _build_path_resolver(items_by_id: dict[str, dict[str, Any]]) -> Callable[[str], tuple[str, ...]]:
     """Create a cached resolver for dependency chains within one item graph."""
 
+    visiting: set[str] = set()
+
     @lru_cache(maxsize=None)
     def _path(current_id: str) -> tuple[str, ...]:
-        blockers = active_blockers(items_by_id[current_id], items_by_id)
-        if not blockers:
+        if current_id in visiting:
             return (current_id,)
-        best = max(
-            (_path(blocker) for blocker in blockers),
-            key=lambda path: (len(path), sum(IMPACT_WEIGHTS[items_by_id[node]["impact"]] for node in path)),
-        )
-        return (current_id, *best)
+
+        item = items_by_id.get(current_id)
+        if item is None:
+            return (current_id,)
+
+        visiting.add(current_id)
+        try:
+            blockers = active_blockers(item, items_by_id)
+            if not blockers:
+                return (current_id,)
+
+            def _path_score(path: tuple[str, ...]) -> int:
+                score = len(path)
+                for node in path:
+                    node_item = items_by_id.get(node)
+                    if node_item is None:
+                        continue
+                    score += IMPACT_WEIGHTS.get(node_item.get("impact"), 0)
+                return score
+
+            best = max((_path(blocker) for blocker in blockers), key=_path_score)
+            return (current_id, *best)
+        finally:
+            visiting.remove(current_id)
 
     return _path
 
@@ -56,6 +78,7 @@ def dependency_depth(
     resolver: Callable[[str], tuple[str, ...]] | None = None,
 ) -> int:
     return max(len(build_dependency_path(item["id"], items_by_id, resolver=resolver)) - 1, 0)
+
 
 def critical_path_candidates(items: list[dict[str, Any]], limit: int = 10) -> list[dict[str, Any]]:
     return critical_path_candidates_with_context(items, _index(items), limit=limit)
@@ -93,7 +116,6 @@ def critical_path_candidates_with_context(
     return sorted(ranked, key=lambda entry: (-entry["score"], -entry["dependency_depth"], entry["id"]))[:limit]
 
 
-
 def quick_wins(items: list[dict[str, Any]], limit: int = 10) -> list[dict[str, Any]]:
     return quick_wins_with_context(items, _index(items), limit=limit)
 
@@ -126,7 +148,6 @@ def quick_wins_with_context(
             }
         )
     return sorted(candidates, key=lambda entry: (-entry["score"], entry["dependency_depth"], entry["id"]))[:limit]
-
 
 
 def blocked_items_report(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
